@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Prometheus Metrics Dashboard</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        form.inline { display: inline; }
+    </style>
+</head>
+<body>
+
+<h1>Submit Metric</h1>
+<form method="post" action="/submit" th:object="${metric}">
+    <input type="hidden" th:field="*{id}" />
+    <input type="text" th:field="*{metricName}" placeholder="Metric Name" required />
+    <input type="text" th:field="*{instance}" placeholder="Instance" required />
+    <input type="text" th:field="*{job}" placeholder="Job" required />
+    <input type="number" step="0.01" th:field="*{metricValue}" placeholder="Value" required />
+    <button type="submit">Save</button>
+</form>
+
+<h2>Collected Metrics</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th><th>Name</th><th>Instance</th><th>Job</th><th>Value</th><th>Time</th><th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="m : ${metrics}">
+        <td th:text="${m.id}"></td>
+        <td th:text="${m.metricName}"></td>
+        <td th:text="${m.instance}"></td>
+        <td th:text="${m.job}"></td>
+        <td th:text="${m.metricValue}"></td>
+        <td th:text="${m.timestamp}"></td>
+        <td>
+            <form class="inline" th:action="@{/edit/{id}(id=${m.id})}" method="get">
+                <button type="submit">Edit</button>
+            </form>
+            <form class="inline" th:action="@{/delete/{id}(id=${m.id})}" method="post">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
